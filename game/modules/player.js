@@ -8,27 +8,22 @@ function(scene) {
 	var material = new THREE.MeshLambertMaterial( { color: 0xff0000 } );
 	var player = new THREE.Mesh( geometry, material );
   player.castShadow = true;
-  // player.receiveShadow = true;
+  player.receiveShadow = true;
 
   var playerPosition = {
     x: player.position.x,
     y: player.position.y
-  }
+  };
+
   var playerVelocity = {
     x: 0,
     y: 0
-  }
+  };
 
   var changePosition = function(x, y) {
-    // console.log('player changePosition ', axis, delta)
-    // player.position.x += x;
-    // player.position.y += y;
     playerPosition.x += x;
     playerPosition.y += y;
   };
-
-  // var X = 0;
-  // var Y = 0;
 
   var isJumping = false;
   var isFalling = false;
@@ -43,11 +38,9 @@ function(scene) {
       isJumping = true;
       jumpSpeed = 10;
     }
-  }
+  };
+
   var checkJump = function() {
-    // console.log('checkJump')
-    // setPosition(X, Y - jumpSpeed);
-    // changePosition(0, jumpSpeed);
     playerVelocity.y = jumpSpeed;
     jumpSpeed--;
     if (jumpSpeed === 0) {
@@ -55,39 +48,26 @@ function(scene) {
       isFalling = true;
       fallSpeed = 0;
     }
-  }
+  };
+
 
   var fallStop = function() {
-    console.log('stop  fall')
     isFalling = false;
     fallSpeed = 0;
-    playerVelocity.y = 0;gti
-    //that.jump();
-  }
+    playerVelocity.y = 0;
+  };
 
 
   var checkFall = function() {
-    // console.log('checkFall')
-    // changePosition(0, - fallSpeed);
     playerVelocity.y = -fallSpeed;
     fallSpeed++;
-    // console.log('fall speed = ', fallSpeed)
-    // for now same as start jump Speed;
     if (fallSpeed > 11) {
-      console.log('elo');
       fallStop();
     }
-    // if(that.Y < canvas.height - that.height) {
-    //   that.setPosition(that.X, that.Y + that.fallSpeed);
-    //   that.fallSpeed++;
-    // } else {
-    //   that.fallStop();
-    // }
-  }
+  };
 
   var update = function() {
-    // console.log('update');
-        player.position.x += playerVelocity.x;
+      player.position.x += playerVelocity.x;
     player.position.y += playerVelocity.y;
     if (isJumping) {
       checkJump();
