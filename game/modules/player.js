@@ -15,7 +15,6 @@ function(scene, frameLoader, platform) {
     'dobromir/mlot4'
   ];
 
-  var that = this;
   player = new THREE.Group();
   var ticks = 0;
   var speed = 2;
@@ -30,6 +29,26 @@ function(scene, frameLoader, platform) {
     x: 0,
     y: 0
   };
+
+  var actionsInterval = 3;
+  var currentActionsInterval = 0;
+  var isAction = false;
+
+  var action = function() {
+    if (isJumping || isFalling || currentAnimation !== 'idle') {
+      return;
+    }
+
+    currentActionsInterval = 0;
+    isAction = true;
+    // playerVelocity.x = 0;
+    // playerVelocty.y = 0;
+    lookBack();
+    changeAnimation('action');
+  };
+
+
+
   var currentAnimation = 'idle';
   var animations = {
     'idle': [0],
@@ -42,6 +61,7 @@ function(scene, frameLoader, platform) {
     currentAnimation = animation;
     currentFrame = 0;
   };
+
   var init = function() {
     var dfd = $.Deferred();
     frameLoader.load(framesUrls).then(function(frameMeshes) {
@@ -73,7 +93,7 @@ function(scene, frameLoader, platform) {
   };
 
   var walkLeft = function() {
-    if (currentAnimation === 'walk' && playerVelocity.x === -speed) {
+    if ((currentAnimation === 'walk' && playerVelocity.x === -speed) || isAction) {
       return;
     }
     changeAnimation('walk');
@@ -81,7 +101,7 @@ function(scene, frameLoader, platform) {
   };
 
   var walkRight = function() {
-    if (currentAnimation === 'walk' && playerVelocity.x === speed) {
+    if ((currentAnimation === 'walk' && playerVelocity.x === speed) || isAction) {
       return;
     }
     changeAnimation('walk');
@@ -97,6 +117,7 @@ function(scene, frameLoader, platform) {
 
     if (animations[currentAnimation].length - 1 === currentFrame) {
       currentFrame = 0;
+      currentActionsInterval++;
     } else {
       currentFrame++;
     }
@@ -186,6 +207,10 @@ function(scene, frameLoader, platform) {
 
   var update = function() {
     if (ticks % 8 === 0) {
+      if (currentActionsInterval === actionsInterval) {
+        changeAnimation('idle');
+        isAction = false;
+      }
       changeFrame();
     }
     player.position.x += playerVelocity.x;
@@ -203,7 +228,7 @@ function(scene, frameLoader, platform) {
         lookRight();
       } else if (playerVelocity.x > 0) {
         lookLeft();
-      } else {
+      } else if (!isAction) {
         changeAnimation('idle');
         lookStraight();
       }
@@ -212,9 +237,11 @@ function(scene, frameLoader, platform) {
     ticks++;
   };
 
+
   return {
     init: init,
     player: player,
+    action: action,
     walkLeft: walkLeft,
     walkRight: walkRight,
     changePosition: changePosition,

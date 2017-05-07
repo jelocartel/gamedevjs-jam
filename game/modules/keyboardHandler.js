@@ -31,7 +31,7 @@ function(player) {
   document.addEventListener('keyup', function(e) {
     switch (e.key) {
       case ' ':
-        console.log('spacja')
+        player.action();
         break;
       // case 'ArrowUp':
       //   console.log('góra');

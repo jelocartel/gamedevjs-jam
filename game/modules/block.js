@@ -28,7 +28,8 @@ define([
     init: init,
     getMesh: function() {
       return mesh;
-    }
+    },
+    getSizes: getSizes
   };
 
 });
