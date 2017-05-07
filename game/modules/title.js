@@ -16,7 +16,8 @@ define([
     frameLoader.load(blockFile).then(function(frameMeshes) {
       mesh = frameMeshes[0];
       mesh.scale.set(4, 4, 4);
-      mesh.position.z += 10;
+      mesh.position.z += 40;
+      mesh.rotation.x += -0.3;
       box = new THREE.Box3().setFromObject(mesh);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
