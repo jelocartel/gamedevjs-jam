@@ -1,4 +1,6 @@
-define(function() {
+define([
+  './animate'
+],function(animate) {
   var level = 0;
   var monster
   var setLevel = function (lev) {
@@ -7,21 +9,44 @@ define(function() {
   var setMonster = function(obj) {
     monster = obj;
   }
-  var start = function() {
+  var start = function(platform) {
     var tw;
-    var onRepeat= function() {
+    var startDirection;
+    if(Math.abs(platform.x - monster.mesh.position.x) < (platform.width/2)) {
+      startDirection = 'left';
+    } else {
+      startDirection = 'right';
+    }
+    if (startDirection==='right') {
+      monster.lookRight();
+    } else {
+      monster.lookLeft();
+    }
+
+    var onRepeat = function() {
       tw.pause();
-      TweenMax.to(monster.mesh.rotation, 0.5, {y:'+=' + (Math.PI), onComplete: function(){tw.resume();}} );
-      var pauseTime =  ~~((Math.random() * 2900) + 1000);
-      setTimeout(function() {
+      startDirection = startDirection === 'right' ? 'left': 'right';
+      if (startDirection==='right') {
+        monster.lookRight(function(){tw.resume();});
+      } else {
+        monster.lookLeft(function(){tw.resume();});
+      }
+      var pauseTime =  ~~((Math.random() * 2500) + 1000);
+      animate.dfdTimeOut(function(){
         tw.pause();
         monster.lookStraight();
         monster.changeAnimation('action');
-        setTimeout(function() {
+      }, pauseTime).then(function(){
+        return animate.dfdTimeOut(function(){
+          if (startDirection==='right') {
+            monster.lookRight();
+          } else {
+            monster.lookLeft();
+          }
           tw.resume();
           monster.changeAnimation('walk');
         }, 1000);
-      }, pauseTime);
+      });
     };
     tw = TweenMax.to(monster.mesh.position, 3, {x:'-=200', repeat:-1, yoyo:true, onRepeat:onRepeat, repeatDelay:1.0, ease:Linear.easeNone});
   };
