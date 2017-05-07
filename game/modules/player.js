@@ -1,9 +1,10 @@
 define([
   './scene',
   './frameLoader',
-  './platform'
+  './platform',
+  './ground'
 ],
-function(scene, frameLoader, platform) {
+function(scene, frameLoader, platform, ground) {
   var framesUrls = [
     'dobromir/walk1',
     'dobromir/walk2',
@@ -125,10 +126,10 @@ function(scene, frameLoader, platform) {
     // console.log('elo');
     player.add(frames[animations[currentAnimation][currentFrame]]);
   };
-  var changePosition = function(x, y) {
-    playerPosition.x += x;
-    playerPosition.y += y;
-  };
+  // var changePosition = function(x, y) {
+  //   playerPosition.x += x;
+  //   playerPosition.y += y;
+  // };
 
   var isJumping = false;
   var isFalling = false;
@@ -160,20 +161,20 @@ function(scene, frameLoader, platform) {
   var fallStop = function() {
     if (playerVelocity.x === 0) {
       changeAnimation('idle');
-    } else {
+    } else if (currentAnimation !== 'walk') {
       changeAnimation('walk');
     }
     isFalling = false;
     fallSpeed = 0;
     playerVelocity.y = 0;
-    lockFalling = false;
+    // lockFalling = false;
   }
-  var lockFalling;
+  // var lockFalling;
 
   var checkFall = function() {
     // console.log('checkFall')
     // changePosition(0, - fallSpeed);
-    if(!lockFalling)
+    // if(!lockFalling)
     playerVelocity.y = -fallSpeed;
     fallSpeed++;
     // console.log('fall speed = ', fallSpeed)
@@ -185,27 +186,41 @@ function(scene, frameLoader, platform) {
 
   var checkCollision = function() {
     var box = new THREE.Box3().setFromObject( player );
-    platform.allPlatforms.forEach(function(el, ind) {
-      // console.log('checkCollision', playerPosition.y, player.position.y )
-      // if ((isFalling) && (playerPosition.x < el.position.x + el.geometry.parameters.width) && (playerPosition.x + player.geometry.parameters.width > el.position.x) && (playerPosition.y /*+ player.geometry.parameters.height */ > el.position.y) && (playerPosition.y + player.geometry.parameters.height < el.position.y + el.geometry.parameters.height)) {
-        // e.onCollide();
-        // if(isFalling) {
-        //   console.log('playerY=' + player.position.y +  'platform Y = '+ (el.position.y + el.geometry.parameters.height))
-        // }
 
-        // console.log( box.min, box.max, box.size() );
-        if (isFalling && (player.position.x < el.position.x + el.geometry.parameters.width) && (player.position.x + box.max.x > el.position.x) && (player.position.y  - el.position.y - el.geometry.parameters.height < playerVelocity.y)) {
-        console.log('collision!!!!');
-        playerVelocity.y = el.position.y + el.geometry.parameters.height - player.position.y;
-        // console.log(playerVelocity.y)
-        lockFalling = true;
-        if (player.position.y === el.position.y + el.geometry.parameters.height)
-        fallStop();
+    var caster = new THREE.Raycaster();
+    var ray = new THREE.Vector3(0, -1, 0);
+    caster.set(player.position, ray);
+    // var collision = caster.intersectObjects(platforms.platforms.map(function(p){ return p.bbox; }).concat([startingPlatform]));
+    var collision = caster.intersectObjects(platform.allPlatforms);
+    if (collision.length) {
+      for (var i = 0; i < collision.length; i++) {
+        if (collision[i].distance < fallSpeed+2) {
+          player.position.y = collision[i].object.position.y + 1;
+          fallStop();
+          // console.log(currentAnimation)
+          break;
+        }
       }
-    });
+    }
+    if (currentAnimation === 'walk' ) {
+      for (var i = 0; i < collision.length; i++) {
+        if (collision[i].distance > 1) {
+          // console.log(collision[i])
+          // player.position.y = collision[i].object.position.y + 1;
+          // fallStop();
+          // isJumping = false;
+          isFalling = true;
+          // fallSpeed = 0;
+          // jumpSpeed = 0;
+          // checkJump();
+          break;
+        }
+      } 
+    }
   }
 
   var update = function() {
+    console.log(currentAnimation)
     if (ticks % 8 === 0) {
       if (currentActionsInterval === actionsInterval) {
         changeAnimation('idle');
@@ -223,7 +238,6 @@ function(scene, frameLoader, platform) {
       checkFall();
     }
 
-    if (!isJumping && !isFalling) {
       if (playerVelocity.x < 0) {
         lookRight();
       } else if (playerVelocity.x > 0) {
@@ -232,7 +246,6 @@ function(scene, frameLoader, platform) {
         changeAnimation('idle');
         lookStraight();
       }
-    }
 
     ticks++;
   };
@@ -244,7 +257,6 @@ function(scene, frameLoader, platform) {
     action: action,
     walkLeft: walkLeft,
     walkRight: walkRight,
-    changePosition: changePosition,
     jump: jump,
     checkJump: checkJump,
     checkFall: checkFall,
