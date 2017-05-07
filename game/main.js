@@ -7,7 +7,8 @@ define([
   './modules/animate',
   './modules/monsterAI',
   './modules/rexIO',
-  './modules/block'
+  './modules/block',
+  './modules/platform'
 ], function(
   sceneClass,
   player,
@@ -17,7 +18,8 @@ define([
   animate,
   monsterAi,
   reksio,
-  block
+  block,
+  platform
 ) {
   'use strict';
   var scene;
@@ -29,6 +31,7 @@ define([
     player.init().then(function() {
       sceneClass.scene.add( player.player );
     });
+
     sceneClass.scene.add( ground.ground );
     // sceneClass.scene.add( block.mesh );
 
@@ -45,6 +48,10 @@ define([
       animate.jumpTo(reksio.mesh.position, 2, '+=100', '+=50', 3.5);
       monsterAi.setMonster(reksio);
       setTimeout(function(){ monsterAi.start(); }, 6000);
+    });
+
+    platform.allPlatforms.forEach(function(el) {
+      sceneClass.scene.add( el );
     });
 
     render();
