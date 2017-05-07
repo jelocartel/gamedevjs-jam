@@ -15,12 +15,12 @@ function(player) {
       //   player.changePosition(0, -10);
       //   break;
       case 'ArrowLeft':
-        player.playerVelocity.x = -player.speed;
+        player.walkLeft();
         // player.changePosition(-10, 0);
         break;
       case 'ArrowRight':
         // player.changePosition(10, 0);
-        player.playerVelocity.x = player.speed;
+        player.walkRight();
         break;
       default:
 

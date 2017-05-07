@@ -3,10 +3,6 @@ define([
   './frameLoader'
 ],
 function(scene, frameLoader) {
-  var that = this;
-  player = new THREE.Group();
-
-  var speed = 2;
   var framesUrls = [
     'dobromir/walk1',
     'dobromir/walk2',
@@ -17,12 +13,37 @@ function(scene, frameLoader) {
     'dobromir/mlot3',
     'dobromir/mlot4'
   ];
-  var frames = [];
 
+  var that = this;
+  player = new THREE.Group();
+  var ticks = 0;
+  var speed = 2;
+  var currentFrame = 0;
+  var frames = [];
+  var playerPosition = {
+    x: 0,
+    y: 0
+  };
+
+  var playerVelocity = {
+    x: 0,
+    y: 0
+  };
+  var currentAnimation = 'idle';
+  var animations = {
+    'idle': [0],
+    'walk': [0, 1, 2, 1],
+    'jump': [3],
+    'action': [4, 5, 6, 7]
+  };
+
+  var changeAnimation = function(animation) {
+    currentAnimation = animation;
+    currentFrame = 0;
+  };
   var init = function() {
     var dfd = $.Deferred();
     frameLoader.load(framesUrls).then(function(frameMeshes) {
-      console.log(frameMeshes);
       frames = frameMeshes;
       player.castShadow = true;
       player.receiveShadow = true;
@@ -46,26 +67,41 @@ function(scene, frameLoader) {
     TweenMax.to(player.rotation, 0.3, { y: 0 });
   };
 
-  var playerPosition = {
-    x: 0,
-    y: 0
+  var lookBack = function() {
+    TweenMax.to(player.rotation, 0.3, { y: Math.PI });
   };
 
-  var playerVelocity = {
-    x: 0,
-    y: 0
+  var walkLeft = function() {
+    if (currentAnimation === 'walk' && playerVelocity.x === -speed) {
+      return;
+    }
+    changeAnimation('walk');
+    playerVelocity.x = -speed;
   };
 
-  var currentFrame = 0;
+  var walkRight = function() {
+    if (currentAnimation === 'walk' && playerVelocity.x === speed) {
+      return;
+    }
+    changeAnimation('walk');
+    playerVelocity.x = speed;
+  };
 
-  var changeFrame = function(frame) {
+  var changeFrame = function() {
     if (!frames.length) {
       return;
     }
 
-    player.remove(frames[currentFrame]);
-    currentFrame = frame;
-    player.add(frames[frame]);
+    player.remove(player.children[0]);
+
+    if (animations[currentAnimation].length - 1 === currentFrame) {
+      currentFrame = 0;
+    } else {
+      currentFrame++;
+    }
+
+    // console.log('elo');
+    player.add(frames[animations[currentAnimation][currentFrame]]);
   };
   var changePosition = function(x, y) {
     playerPosition.x += x;
@@ -80,6 +116,7 @@ function(scene, frameLoader) {
 
   var jump = function() {
     if(!isJumping && !isFalling) {
+      changeAnimation('jump');
       fallSpeed = 0;
       isJumping = true;
       jumpSpeed = 10;
@@ -87,6 +124,7 @@ function(scene, frameLoader) {
   };
 
   var checkJump = function() {
+    changeAnimation('jump');
     playerVelocity.y = jumpSpeed;
     jumpSpeed--;
     if (jumpSpeed === 0) {
@@ -98,9 +136,15 @@ function(scene, frameLoader) {
 
 
   var fallStop = function() {
+    if (playerVelocity.x === 0) {
+      changeAnimation('idle');
+    } else {
+      changeAnimation('walk');
+    }
     isFalling = false;
     fallSpeed = 0;
     playerVelocity.y = 0;
+    player.position.y = 0;
   };
 
 
@@ -113,6 +157,9 @@ function(scene, frameLoader) {
   };
 
   var update = function() {
+    if (ticks % 8 === 0) {
+      changeFrame();
+    }
     player.position.x += playerVelocity.x;
     player.position.y += playerVelocity.y;
     if (isJumping) {
@@ -122,19 +169,25 @@ function(scene, frameLoader) {
       checkFall();
     }
 
-    if (playerVelocity.x < 0) {
-      lookRight();
-    } else if (playerVelocity.x > 0) {
-      lookLeft();
-    } else {
-      lookStraight();
+    if (!isJumping && !isFalling) {
+      if (playerVelocity.x < 0) {
+        lookRight();
+      } else if (playerVelocity.x > 0) {
+        lookLeft();
+      } else {
+        changeAnimation('idle');
+        lookStraight();
+      }
     }
+
+    ticks++;
   };
 
   return {
     init: init,
     player: player,
-    speed: speed,
+    walkLeft: walkLeft,
+    walkRight: walkRight,
     changePosition: changePosition,
     jump: jump,
     checkJump: checkJump,
