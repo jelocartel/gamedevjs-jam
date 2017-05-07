@@ -4,14 +4,16 @@ define([
   './modules/ground',
   './modules/lights',
   './modules/keyboardHandler',
-  './modules/animate'
+  './modules/animate',
+  './modules/monsterAI'
 ], function(
   sceneClass,
   player,
   ground,
   lights,
   keyboardHandler,
-  animate
+  animate,
+  monsterAi
 ) {
   var scene, lights;
   var cube;
@@ -25,17 +27,19 @@ define([
     sceneClass.scene.add( player.player );
     sceneClass.scene.add( ground.ground );
     scene.camera.position.z = 170;
-    var geometry = new THREE.BoxGeometry( 40, 40, 40 );
+    var geometry = new THREE.BoxGeometry( 20, 20, 20 );
     var material = new THREE.MeshLambertMaterial( {color: 0x0000ff} );
     cube = new THREE.Mesh( geometry, material );
     window.cube = cube;
-    cube.position.set( -350, -50, -300 );
+    cube.position.set( -150, 10, 0 );
     sceneClass.scene.add( cube );
 
-    animate.jumpTo(cube.position ,1, '+=200', '+=0');
-    animate.jumpTo(cube.position ,1, '+=100', '+=75', 1);
-    animate.jumpTo(cube.position ,1.5, '-=100', '+=100', 2);
-    animate.jumpTo(cube.position, 2, '+=200', '+=180', 3.5);
+    animate.jumpTo(cube.position ,1, '+=100', '+=0');
+    animate.jumpTo(cube.position ,1, '+=50', '+=37.5', 1);
+    animate.jumpTo(cube.position ,1.5, '-=50', '+=40', 2);
+    animate.jumpTo(cube.position, 2, '+=100', '+=50', 3.5);
+    monsterAi.setMonster(cube);
+    setTimeout(function(){ monsterAi.start(); }, 6000);
 
   }
 
