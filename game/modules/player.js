@@ -1,18 +1,40 @@
 define([
-  './scene'
+  './scene',
+  './frameLoader'
 ],
-function(scene) {
+function(scene, frameLoader) {
   var that = this;
+  var player = new THREE.Group();
 
-	var geometry = new THREE.BoxGeometry( 20, 20, 20 );
-	var material = new THREE.MeshLambertMaterial( { color: 0xff0000 } );
-	var player = new THREE.Mesh( geometry, material );
-  player.castShadow = true;
-  player.receiveShadow = true;
+  var framesUrls = [
+    'dobromir/walk1',
+    'dobromir/walk2',
+    'dobromir/walk3',
+    'dobromir/jump1',
+    'dobromir/mlot1',
+    'dobromir/mlot2',
+    'dobromir/mlot3',
+    'dobromir/mlot4'
+  ];
+  var frames = [];
+
+  var init = function() {
+    var dfd = $.Deferred();
+    frameLoader.load(framesUrls).then(function(frameMeshes) {
+      console.log(frameMeshes);
+      frames = frameMeshes;
+      player.castShadow = true;
+      player.receiveShadow = true;
+      changeFrame(0);
+      dfd.resolve();
+    });
+
+    return dfd;
+  };
 
   var playerPosition = {
-    x: player.position.x,
-    y: player.position.y
+    x: 0,
+    y: 0
   };
 
   var playerVelocity = {
@@ -20,6 +42,17 @@ function(scene) {
     y: 0
   };
 
+  var currentFrame = 0;
+
+  var changeFrame = function(frame) {
+    if (!frames.length) {
+      return;
+    }
+
+    player.remove(frames[currentFrame]);
+    currentFrame = frame;
+    player.add(frames[frame]);
+  };
   var changePosition = function(x, y) {
     playerPosition.x += x;
     playerPosition.y += y;
@@ -66,7 +99,7 @@ function(scene) {
   };
 
   var update = function() {
-      player.position.x += playerVelocity.x;
+    player.position.x += playerVelocity.x;
     player.position.y += playerVelocity.y;
     if (isJumping) {
       checkJump();
@@ -74,10 +107,10 @@ function(scene) {
     if (isFalling) {
       checkFall();
     }
-
   };
 
   return {
+    init: init,
     player: player,
     changePosition: changePosition,
     jump: jump,
