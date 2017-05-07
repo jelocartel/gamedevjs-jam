@@ -103,10 +103,29 @@ define([
         var elem =
         d = d.then(function(params){
           return function() {
-            return animate.jumpTo(reksio, params[0], params[1], params[2]).then(function() {
-              if(elem[4]) {
-                //elem[4]
+            return animate.jumpTo(reksio, params[0], params[1], params[2]).then(function(){
+              if(params[3]) {
+              var d = $.Deferred();
+              reksio.lookStraight(function(){d.resolve();});
+              return d;
+            } else {
+              return $.Deferred().resolve();
+            }
+
+            }).then(function(){
+              if(params[3]) {
+                reksio.changeAnimation('action');
               }
+              return $.Deferred().resolve();
+            }).then(function() {
+              if(params[3]) {
+                params[3].break();
+              }
+              return $.Deferred().resolve();
+            }).then(function(){
+              return animate.dfdTimeOut(function(){
+                reksio.changeAnimation('walk');
+              }, 800);
             });
           }
         }(queue.shift())); // you don't need the `.done`
