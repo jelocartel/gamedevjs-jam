@@ -28,7 +28,7 @@ define(function() {
 
     window.cam = camera;
     camera.position.x = 0;
-    camera.position.z = 160;
+    camera.position.z = 145;
     camera.position.y = 80;
     // camera.rotation.y = 0.3;
 
