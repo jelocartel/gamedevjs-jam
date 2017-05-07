@@ -134,6 +134,14 @@ define([
       }
       d.then(function(){
         monsterAi.setMonster(reksio);
+        monsterAi.setCallBack(function() {
+          var geometry = new THREE.BoxGeometry( 15, 8 , 5 );
+          var material = new THREE.MeshBasicMaterial( {color: 0xc13000} );
+          var cube = new THREE.Mesh( geometry, material );
+          cube.position.set(reksio.mesh.position.x, monsterPlatform.y, 0);
+          sceneClass.scene.add( cube );
+          TweenMax.to(cube.position, 2, { y: -30});
+        });
         monsterAi.start(monsterPlatform);
       });
     });
