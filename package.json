@@ -9,6 +9,7 @@
   "author": "Wojciech Wozniak <wwozniak92@gmail.com> (http://github.com/wojtekw92)",
   "license": "MIT",
   "dependencies": {
+    "gsap": "^1.19.1",
     "requirejs": "^2.3.3",
     "three": "^0.85.2"
   },
