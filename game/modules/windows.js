@@ -44,8 +44,8 @@ define([
 
     mesh.fixedFrame = frames[frameNumber].clone();
     mesh.brokenFrame = frames[frameNumber+1].clone();
-    // mesh.add(mesh.fixedFrame);
-    mesh.add(mesh.brokenFrame);
+    mesh.add(mesh.fixedFrame);
+    // mesh.add(mesh.brokenFrame);
 
     mesh.break = function() {
       mesh.remove(mesh.fixedFrame);

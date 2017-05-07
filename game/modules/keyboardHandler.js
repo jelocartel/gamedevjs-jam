@@ -1,7 +1,8 @@
 define([
-  './player'
+  './player',
+  './title'
 ],
-function(player) {
+function(player, title) {
   document.addEventListener('keydown', function(e) {
     switch (e.key) {
       case ' ':
@@ -10,10 +11,9 @@ function(player) {
         // player.changePosition('y', 10);
         player.jump();
         break;
-      // case 'ArrowDown':
-      //   console.log('dół');
-      //   player.changePosition(0, -10);
-      //   break;
+      case 'ArrowDown':
+        title.go();
+        break;
       case 'ArrowLeft':
         player.walkLeft();
         // player.changePosition(-10, 0);
