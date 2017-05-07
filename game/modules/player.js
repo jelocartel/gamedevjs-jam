@@ -2,9 +2,10 @@ define([
   './scene',
   './frameLoader',
   './platform',
-  './ground'
+  './ground',
+  './windows'
 ],
-function(scene, frameLoader, platform, ground) {
+function(scene, frameLoader, platform, ground, windows) {
   var framesUrls = [
     'dobromir/walk1',
     'dobromir/walk2',
@@ -16,7 +17,9 @@ function(scene, frameLoader, platform, ground) {
     'dobromir/mlot4'
   ];
 
-  player = new THREE.Group();
+  var player = new THREE.Group();
+  player.position.z = -5;
+  var currentWindow;
   var ticks = 0;
   var speed = 2;
   var currentFrame = 0;
@@ -123,13 +126,8 @@ function(scene, frameLoader, platform, ground) {
       currentFrame++;
     }
 
-    // console.log('elo');
     player.add(frames[animations[currentAnimation][currentFrame]]);
   };
-  // var changePosition = function(x, y) {
-  //   playerPosition.x += x;
-  //   playerPosition.y += y;
-  // };
 
   var isJumping = false;
   var isFalling = false;
@@ -162,20 +160,12 @@ function(scene, frameLoader, platform, ground) {
     if (playerVelocity.x === 0) {
       changeAnimation('idle');
     }
-    // else if (currentAnimation !== 'walk') {
-    //   changeAnimation('walk');
-    // }
     isFalling = false;
     fallSpeed = 0;
     playerVelocity.y = 0;
-    // lockFalling = false;
   };
-  // var lockFalling;
 
   var checkFall = function() {
-    // console.log('checkFall')
-    // changePosition(0, - fallSpeed);
-    // if(!lockFalling)
     playerVelocity.y = -fallSpeed;
     fallSpeed++;
   };
@@ -191,8 +181,9 @@ function(scene, frameLoader, platform, ground) {
       for (i = 0; i < collision.length; i++) {
         if (collision[i].distance < fallSpeed + 2) {
           var vector = new THREE.Vector3();
-        vector.setFromMatrixPosition( collision[i].object.matrixWorld );
+          vector.setFromMatrixPosition( collision[i].object.matrixWorld );
           player.position.y = vector.y + 1;
+          currentWindow = collision[i].object.name;
           fallStop();
           break;
         }
@@ -211,6 +202,13 @@ function(scene, frameLoader, platform, ground) {
   var update = function() {
     if (ticks % 8 === 0) {
       if (currentActionsInterval === actionsInterval) {
+        if (currentWindow) {
+          var w = windows.getWindow(currentWindow);
+          console.log(w);
+          if (w) {
+            w.fix();
+          }
+        }
         changeAnimation('idle');
         isAction = false;
       }
