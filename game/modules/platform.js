@@ -1,7 +1,7 @@
 define(function() {
 
   var Platform = function(x, y, length) {
-    var geometry = new THREE.BoxGeometry( length, 2, 5 );
+    var geometry = new THREE.BoxGeometry( length, 2, 10 );
     var material = new THREE.MeshLambertMaterial( { color: 0xcc9933 } );
     var platform = new THREE.Mesh( geometry, material );
 

@@ -78,6 +78,8 @@ define([
           sceneClass.scene.add(win);
           windowPositions[j].push(win);
           var plat = platform.createPlatform(0, 1.5, win.sizes().x+2);
+          plat.name = j+'-'+i;
+          win.name = j+'-'+i;
           platforms.push(plat);
           window.platform = plat;
           win.add(plat);
