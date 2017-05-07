@@ -6,7 +6,9 @@ define([
   './modules/keyboardHandler',
   './modules/animate',
   './modules/monsterAI',
-  './modules/rexIO'
+  './modules/rexIO',
+  './modules/block',
+  './modules/platform'
 ], function(
   sceneClass,
   player,
@@ -15,7 +17,9 @@ define([
   keyboardHandler,
   animate,
   monsterAi,
-  reksio
+  reksio,
+  block,
+  platform
 ) {
   'use strict';
   var scene;
@@ -27,8 +31,10 @@ define([
     player.init().then(function() {
       sceneClass.scene.add( player.player );
     });
+
     sceneClass.scene.add( ground.ground );
-    scene.camera.position.z = 170;
+    // sceneClass.scene.add( block.mesh );
+
 
 
     var geometry = new THREE.BoxGeometry( 200, 10, 5 );
@@ -36,6 +42,9 @@ define([
     var cube = new THREE.Mesh( geometry, material );
     cube.position.set(-50, 130, 0);
     sceneClass.scene.add( cube );
+    block.init().then(function() {
+      sceneClass.scene.add(block.getMesh());
+    });
     reksio.init().then(function() {
       reksio.mesh.position.set( -150, 10, 0 );
       sceneClass.scene.add( reksio.mesh );
@@ -50,6 +59,10 @@ define([
         monsterAi.setMonster(reksio);
         monsterAi.start('right');
       })
+    });
+
+    platform.allPlatforms.forEach(function(el) {
+      sceneClass.scene.add( el );
     });
 
     render();
