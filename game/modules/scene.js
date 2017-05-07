@@ -32,7 +32,7 @@ define(function() {
     camera.position.y = 80;
     // camera.rotation.y = 0.3;
 
-    // scene.fog = new THREE.Fog(0x1ec503, 0.5, 450);
+    scene.fog = new THREE.Fog(0xefd1b5, 0.0025, 700);
 
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
     renderer.setSize(WIDTH, HEIGHT);
