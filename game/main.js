@@ -101,8 +101,10 @@ define([
       windowPositions.forEach(function(el) {
         var myWin = el[~~(Math.random()*6)];
         queue.push([1.5 , myWin.position.x, myWin.position.y+3, myWin]);
+        myWin = el[~~(Math.random()*6)];
+        queue.push([1.5 , myWin.position.x, myWin.position.y+3, myWin]);
       });
-      queue.push([1 , 20, 130, null]);
+      queue.push([1 , 20, 132, null]);
 
       var d = $.Deferred().resolve();
       while (queue.length > 0) {
