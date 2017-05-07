@@ -6,7 +6,8 @@ define([
   './modules/keyboardHandler',
   './modules/animate',
   './modules/monsterAI',
-  './modules/rexIO'
+  './modules/rexIO',
+  './modules/block'
 ], function(
   sceneClass,
   player,
@@ -15,7 +16,8 @@ define([
   keyboardHandler,
   animate,
   monsterAi,
-  reksio
+  reksio,
+  block
 ) {
   'use strict';
   var scene;
@@ -28,8 +30,11 @@ define([
       sceneClass.scene.add( player.player );
     });
     sceneClass.scene.add( ground.ground );
-    scene.camera.position.z = 170;
+    // sceneClass.scene.add( block.mesh );
 
+    block.init().then(function() {
+      sceneClass.scene.add(block.getMesh());
+    });
     reksio.init().then(function() {
       reksio.mesh.position.set( -150, 10, 0 );
       sceneClass.scene.add( reksio.mesh );
