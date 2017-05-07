@@ -26,9 +26,10 @@ define(function() {
       farPlane
       );
 
-    camera.position.x = -30;
-    camera.position.z = 130;
-    camera.position.y = 100;
+    camera.position.x = -40;
+    // camera.position.z = 130;
+    camera.position.y = 70;
+    window.camera = camera;
 
     scene.fog = new THREE.Fog(0x1ec503, 0.5, 450);
 
