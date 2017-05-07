@@ -1,34 +1,62 @@
 define([
-  './scene'
+  './scene',
+  './frameLoader'
 ],
-function(scene) {
+function(scene, frameLoader) {
   var that = this;
+  var player = new THREE.Group();
 
-	var geometry = new THREE.BoxGeometry( 20, 20, 20 );
-	var material = new THREE.MeshLambertMaterial( { color: 0xff0000 } );
-	var player = new THREE.Mesh( geometry, material );
-  player.castShadow = true;
-  // player.receiveShadow = true;
+  var framesUrls = [
+    'dobromir/walk1',
+    'dobromir/walk2',
+    'dobromir/walk3',
+    'dobromir/jump1',
+    'dobromir/mlot1',
+    'dobromir/mlot2',
+    'dobromir/mlot3',
+    'dobromir/mlot4'
+  ];
+  var frames = [];
+
+  var init = function() {
+    var dfd = $.Deferred();
+    frameLoader.load(framesUrls).then(function(frameMeshes) {
+      console.log(frameMeshes);
+      frames = frameMeshes;
+      player.castShadow = true;
+      player.receiveShadow = true;
+      changeFrame(0);
+      dfd.resolve();
+    });
+
+    return dfd;
+  };
 
   var playerPosition = {
-    x: player.position.x,
-    y: player.position.y
-  }
+    x: 0,
+    y: 0
+  };
+
   var playerVelocity = {
     x: 0,
     y: 0
-  }
+  };
 
+  var currentFrame = 0;
+
+  var changeFrame = function(frame) {
+    if (!frames.length) {
+      return;
+    }
+
+    player.remove(frames[currentFrame]);
+    currentFrame = frame;
+    player.add(frames[frame]);
+  };
   var changePosition = function(x, y) {
-    // console.log('player changePosition ', axis, delta)
-    // player.position.x += x;
-    // player.position.y += y;
     playerPosition.x += x;
     playerPosition.y += y;
   };
-
-  // var X = 0;
-  // var Y = 0;
 
   var isJumping = false;
   var isFalling = false;
@@ -37,17 +65,14 @@ function(scene) {
   var fallSpeed = 0;
 
   var jump = function() {
-    // console.log('jump')
     if(!isJumping && !isFalling) {
       fallSpeed = 0;
       isJumping = true;
       jumpSpeed = 10;
     }
-  }
+  };
+
   var checkJump = function() {
-    // console.log('checkJump')
-    // setPosition(X, Y - jumpSpeed);
-    // changePosition(0, jumpSpeed);
     playerVelocity.y = jumpSpeed;
     jumpSpeed--;
     if (jumpSpeed === 0) {
@@ -55,39 +80,26 @@ function(scene) {
       isFalling = true;
       fallSpeed = 0;
     }
-  }
+  };
+
 
   var fallStop = function() {
-    console.log('stop  fall')
     isFalling = false;
     fallSpeed = 0;
-    playerVelocity.y = 0;gti
-    //that.jump();
-  }
+    playerVelocity.y = 0;
+  };
 
 
   var checkFall = function() {
-    // console.log('checkFall')
-    // changePosition(0, - fallSpeed);
     playerVelocity.y = -fallSpeed;
     fallSpeed++;
-    // console.log('fall speed = ', fallSpeed)
-    // for now same as start jump Speed;
     if (fallSpeed > 11) {
-      console.log('elo');
       fallStop();
     }
-    // if(that.Y < canvas.height - that.height) {
-    //   that.setPosition(that.X, that.Y + that.fallSpeed);
-    //   that.fallSpeed++;
-    // } else {
-    //   that.fallStop();
-    // }
-  }
+  };
 
   var update = function() {
-    // console.log('update');
-        player.position.x += playerVelocity.x;
+    player.position.x += playerVelocity.x;
     player.position.y += playerVelocity.y;
     if (isJumping) {
       checkJump();
@@ -95,10 +107,10 @@ function(scene) {
     if (isFalling) {
       checkFall();
     }
-
   };
 
   return {
+    init: init,
     player: player,
     changePosition: changePosition,
     jump: jump,

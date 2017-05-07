@@ -15,21 +15,22 @@ define([
   animate,
   monsterAi
 ) {
-  var scene, lights;
-  var cube;
+  'use strict';
+  var scene;
 
   function init(event) {
     scene = sceneClass.createScene();
     sceneClass.scene = scene.scene;
     lights.createLights();
-
-    player.player.position.set( 0, 5, 0 );
-    sceneClass.scene.add( player.player );
+    player.init().then(function() {
+      player.player.position.set( 0, 5, 0 );
+      sceneClass.scene.add( player.player );
+    });
     sceneClass.scene.add( ground.ground );
     scene.camera.position.z = 170;
     var geometry = new THREE.BoxGeometry( 20, 20, 20 );
     var material = new THREE.MeshLambertMaterial( {color: 0x0000ff} );
-    cube = new THREE.Mesh( geometry, material );
+    var cube = new THREE.Mesh( geometry, material );
     window.cube = cube;
     cube.position.set( -150, 10, 0 );
     sceneClass.scene.add( cube );
@@ -41,17 +42,15 @@ define([
     monsterAi.setMonster(cube);
     setTimeout(function(){ monsterAi.start(); }, 6000);
 
+    render();
   }
-
-  init();
-
 
   function render() {
     requestAnimationFrame( render );
-
     player.update();
     scene.renderer.render( scene.scene, scene.camera );
   }
-  render();
+
+  window.onload = init;
 
 });

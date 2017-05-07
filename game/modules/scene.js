@@ -31,7 +31,7 @@ define(function() {
     camera.position.y = 70;
     window.camera = camera;
 
-    scene.fog = new THREE.Fog(0x1ec503, 0.5, 450);
+    // scene.fog = new THREE.Fog(0x1ec503, 0.5, 450);
 
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
     renderer.setSize(WIDTH, HEIGHT);
@@ -49,7 +49,7 @@ define(function() {
       WIDTH: WIDTH,
       HEIGHT: HEIGHT
     };
-  }
+  };
 
   var handleWindowResize = function() {
     HEIGHT = window.innerHeight;
@@ -57,7 +57,7 @@ define(function() {
     renderer.setSize(WIDTH, HEIGHT);
     camera.aspect = WIDTH / HEIGHT;
     camera.updateProjectionMatrix();
-  }
+  };
 
   return {
     createScene: createScene,
