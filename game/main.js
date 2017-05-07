@@ -35,13 +35,19 @@ define([
     sceneClass.scene.add( ground.ground );
     // sceneClass.scene.add( block.mesh );
 
-
-
-    var geometry = new THREE.BoxGeometry( 200, 10, 5 );
+//////////////////////////////TEMP//////////////////////////////
+    var monsterPlatform = {
+      x: 0,
+      y: 130,
+      width: 200,
+      height: 10,
+    }
+    var geometry = new THREE.BoxGeometry( monsterPlatform.width, monsterPlatform.height, 5 );
     var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
     var cube = new THREE.Mesh( geometry, material );
-    cube.position.set(-50, 130, 0);
+    cube.position.set(monsterPlatform.x, monsterPlatform.y, 0);
     sceneClass.scene.add( cube );
+///////////////////////////////////////////////
     block.init().then(function() {
       sceneClass.scene.add(block.getMesh());
     });
@@ -54,10 +60,10 @@ define([
       }).then(function(){
         return animate.jumpTo(reksio, 1.5, -50, 87.5);
       }).then(function(){
-        return animate.jumpTo(reksio, 2, 50, 136);
+        return animate.jumpTo(reksio, 2, 100, 136);
       }).then(function(){
         monsterAi.setMonster(reksio);
-        monsterAi.start('right');
+        monsterAi.start(monsterPlatform);
       })
     });
 

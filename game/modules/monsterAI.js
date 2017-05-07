@@ -9,13 +9,7 @@ define([
   var setMonster = function(obj) {
     monster = obj;
   }
-  var start = function() {
-    var platform = {
-      x: -50,
-      y: 130,
-      width: 200,
-      height: 10,
-    }
+  var start = function(platform) {
     var tw;
     var startDirection;
     if(Math.abs(platform.x - monster.mesh.position.x) < (platform.width/2)) {
