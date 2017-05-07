@@ -7,8 +7,9 @@ define(function() {
     } else {
       obj.lookLeft();
     }
+    console.log('elo y='+ y);
     TweenMax.to(obj.mesh.position, time, { x: x, delay: delay});
-    TweenMax.to(obj.mesh.position, time, {ease: Back.easeOut.config( 2.0), y: y, delay: delay, onComplete: function(){ dfd.resolve()}});
+    TweenMax.to(obj.mesh.position, time, {ease: Back.easeOut.config( 2.0), y: y, delay: delay, onComplete: function(){ dfd.resolve(); console.log('fini' + y)}});
     return dfd;
   }
   var dfdTimeOut = function(toDo, time) {

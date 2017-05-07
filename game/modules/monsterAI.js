@@ -48,7 +48,9 @@ define([
         }, 1000);
       });
     };
-    tw = TweenMax.to(monster.mesh.position, 3, {x:'-=200', repeat:-1, yoyo:true, onRepeat:onRepeat, repeatDelay:1.0, ease:Linear.easeNone});
+    animate.jumpTo(monster, 1, platform.withd - platform.x + monster.mesh.position.x, monster.mesh.position.y).then(function(){
+      tw = TweenMax.to(monster.mesh.position, 3, {x:'-=200', repeat:-1, yoyo:true, onRepeat:onRepeat, repeatDelay:1.0, ease:Linear.easeNone});
+    });
   };
   return {
     setLevel: setLevel,

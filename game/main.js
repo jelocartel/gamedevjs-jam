@@ -52,26 +52,39 @@ define([
       sceneClass.scene.add(block.getMesh());
     });
     reksio.init().then(function() {
-      reksio.mesh.position.set( -150, 10, 0 );
+      reksio.mesh.position.set( -150, 0, 0 );
       sceneClass.scene.add( reksio.mesh );
 
-      animate.jumpTo(reksio, 1 , -50, 10).then(function() {
-        return animate.jumpTo(reksio, 1, 0, 47.5);
-      }).then(function(){
-        return animate.jumpTo(reksio, 1.5, -50, 87.5);
-      }).then(function(){
-        return animate.jumpTo(reksio, 2, 100, 136);
-      }).then(function(){
+      var queue = [];
+      queue.push([1 , -50, 0]);
+
+
+      platform.allPlatforms.forEach(function(el) {
+        sceneClass.scene.add( el );
+        console.log('x='+Math.floor(Math.random()*el.geometry.parameters.width+el.position.x) + 'y=' + el.position.y)
+        queue.push([1.5 , (Math.random()*el.geometry.parameters.width+el.position.x), el.position.y]);
+      });
+      queue.push([1 , 20, 136]);
+
+      var d = $.Deferred().resolve();
+      while (queue.length > 0) {
+        var elem =
+        d = d.then(function(params){
+          return function() {
+            return animate.jumpTo(reksio, params[0], params[1], params[2]);
+          }
+        }(queue.shift())); // you don't need the `.done`
+      }
+      d.then(function(){
         monsterAi.setMonster(reksio);
         monsterAi.start(monsterPlatform);
       })
     });
 
-    platform.allPlatforms.forEach(function(el) {
-      sceneClass.scene.add( el );
-    });
+
 
     render();
+
   }
 
   function render() {
