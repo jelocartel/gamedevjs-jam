@@ -138,11 +138,11 @@ function(scene, frameLoader, platform, ground) {
   var fallSpeed = 0;
 
   var jump = function() {
-    if(!isJumping && !isFalling) {
+    if(!isJumping && !isFalling && currentAnimation !== 'jump') {
       changeAnimation('jump');
       fallSpeed = 0;
       isJumping = true;
-      jumpSpeed = 5;
+      jumpSpeed = 9;
     }
   };
 
@@ -161,14 +161,15 @@ function(scene, frameLoader, platform, ground) {
   var fallStop = function() {
     if (playerVelocity.x === 0) {
       changeAnimation('idle');
-    } else if (currentAnimation !== 'walk') {
-      changeAnimation('walk');
     }
+    // else if (currentAnimation !== 'walk') {
+    //   changeAnimation('walk');
+    // }
     isFalling = false;
     fallSpeed = 0;
     playerVelocity.y = 0;
     // lockFalling = false;
-  }
+  };
   // var lockFalling;
 
   var checkFall = function() {
@@ -177,50 +178,37 @@ function(scene, frameLoader, platform, ground) {
     // if(!lockFalling)
     playerVelocity.y = -fallSpeed;
     fallSpeed++;
-    // console.log('fall speed = ', fallSpeed)
-    // for now same as start jump Speed;
-    if (fallSpeed > 5) {
-      fallStop();
-    }
   };
 
   var checkCollision = function() {
     var box = new THREE.Box3().setFromObject( player );
-
+    var i;
     var caster = new THREE.Raycaster();
     var ray = new THREE.Vector3(0, -1, 0);
     caster.set(player.position, ray);
-    // var collision = caster.intersectObjects(platforms.platforms.map(function(p){ return p.bbox; }).concat([startingPlatform]));
-    var collision = caster.intersectObjects(platform.allPlatforms);
+    var collision = caster.intersectObjects(platform.allPlatforms.concat(ground.ground));
     if (collision.length) {
-      for (var i = 0; i < collision.length; i++) {
-        if (collision[i].distance < fallSpeed+2) {
-          player.position.y = collision[i].object.position.y + 1;
+      for (i = 0; i < collision.length; i++) {
+        if (collision[i].distance < fallSpeed + 2) {
+          var vector = new THREE.Vector3();
+        vector.setFromMatrixPosition( collision[i].object.matrixWorld );
+          player.position.y = vector.y + 1;
           fallStop();
-          // console.log(currentAnimation)
           break;
         }
       }
     }
     if (currentAnimation === 'walk' ) {
-      for (var i = 0; i < collision.length; i++) {
+      for (i = 0; i < collision.length; i++) {
         if (collision[i].distance > 1) {
-          // console.log(collision[i])
-          // player.position.y = collision[i].object.position.y + 1;
-          // fallStop();
-          // isJumping = false;
           isFalling = true;
-          // fallSpeed = 0;
-          // jumpSpeed = 0;
-          // checkJump();
           break;
         }
-      } 
+      }
     }
-  }
+  };
 
   var update = function() {
-    console.log(currentAnimation)
     if (ticks % 8 === 0) {
       if (currentActionsInterval === actionsInterval) {
         changeAnimation('idle');
@@ -230,7 +218,10 @@ function(scene, frameLoader, platform, ground) {
     }
     player.position.x += playerVelocity.x;
     player.position.y += playerVelocity.y;
-    checkCollision();
+    if (!isAction) {
+      checkCollision();
+    }
+
     if (isJumping) {
       checkJump();
     }
