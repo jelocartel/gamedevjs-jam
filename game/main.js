@@ -37,23 +37,25 @@ define([
     sceneClass.scene.add( ground.ground );
     // sceneClass.scene.add( block.mesh );
 
-//////////////////////////////TEMP//////////////////////////////
     var monsterPlatform = {
       x: 0,
       y: 130,
-      width: 200,
-      height: 10,
+      width: 1,
+      height: 2,
     };
-    var geometry = new THREE.BoxGeometry( monsterPlatform.width, monsterPlatform.height, 5 );
-    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-    var cube = new THREE.Mesh( geometry, material );
-    cube.position.set(monsterPlatform.x, monsterPlatform.y, 0);
-    sceneClass.scene.add( cube );
-///////////////////////////////////////////////
-
 
     block.init().then(function() {
       sceneClass.scene.add(block.getMesh());
+      monsterPlatform.width = block.getSizes().x;
+      //////////////////////////////TEMP//////////////////////////////
+
+      var geometry = new THREE.BoxGeometry( monsterPlatform.width, monsterPlatform.height, 5 );
+      var material = new THREE.MeshBasicMaterial( {color: 0x613000} );
+      var cube = new THREE.Mesh( geometry, material );
+      cube.position.set(monsterPlatform.x, monsterPlatform.y, 0);
+      sceneClass.scene.add( cube );
+      ///////////////////////////////////////////////
+
     });
     reksio.init().then(function() {
       reksio.mesh.position.set( -150, 10, 0 );
