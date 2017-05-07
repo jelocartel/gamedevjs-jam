@@ -6,7 +6,8 @@ define([
   './modules/keyboardHandler',
   './modules/animate',
   './modules/monsterAI',
-  './modules/rexIO'
+  './modules/rexIO',
+  './modules/platform'
 ], function(
   sceneClass,
   player,
@@ -15,7 +16,8 @@ define([
   keyboardHandler,
   animate,
   monsterAi,
-  reksio
+  reksio,
+  platform
 ) {
   'use strict';
   var scene;
@@ -40,6 +42,10 @@ define([
       animate.jumpTo(reksio.mesh.position, 2, '+=100', '+=50', 3.5);
       monsterAi.setMonster(reksio);
       setTimeout(function(){ monsterAi.start(); }, 6000);
+    });
+
+    platform.allPlatforms.forEach(function(el) {
+      sceneClass.scene.add( el );
     });
 
     render();

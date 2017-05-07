@@ -1,8 +1,9 @@
 define([
   './scene',
-  './frameLoader'
+  './frameLoader',
+  './platform'
 ],
-function(scene, frameLoader) {
+function(scene, frameLoader, platform) {
   var framesUrls = [
     'dobromir/walk1',
     'dobromir/walk2',
@@ -119,7 +120,7 @@ function(scene, frameLoader) {
       changeAnimation('jump');
       fallSpeed = 0;
       isJumping = true;
-      jumpSpeed = 10;
+      jumpSpeed = 12;
     }
   };
 
@@ -144,17 +145,43 @@ function(scene, frameLoader) {
     isFalling = false;
     fallSpeed = 0;
     playerVelocity.y = 0;
-    player.position.y = 0;
-  };
-
+    lockFalling = false;
+  }
+  var lockFalling;
 
   var checkFall = function() {
+    // console.log('checkFall')
+    // changePosition(0, - fallSpeed);
+    if(!lockFalling)
     playerVelocity.y = -fallSpeed;
     fallSpeed++;
-    if (fallSpeed > 11) {
+    // console.log('fall speed = ', fallSpeed)
+    // for now same as start jump Speed;
+    if (fallSpeed > 13) {
       fallStop();
     }
   };
+
+  var checkCollision = function() {
+    platform.allPlatforms.forEach(function(el, ind) {
+      // console.log('checkCollision', playerPosition.y, player.position.y )
+      // if ((isFalling) && (playerPosition.x < el.position.x + el.geometry.parameters.width) && (playerPosition.x + player.geometry.parameters.width > el.position.x) && (playerPosition.y /*+ player.geometry.parameters.height */ > el.position.y) && (playerPosition.y + player.geometry.parameters.height < el.position.y + el.geometry.parameters.height)) {
+        // e.onCollide();
+        // if(isFalling) {
+        //   console.log('playerY=' + player.position.y +  'platform Y = '+ (el.position.y + el.geometry.parameters.height))
+        // }
+        var box = new THREE.Box3().setFromObject( player );
+        // console.log( box.min, box.max, box.size() );
+        if (isFalling && (player.position.x < el.position.x + el.geometry.parameters.width) && (player.position.x + box.max.x > el.position.x) && (player.position.y  - el.position.y - el.geometry.parameters.height < playerVelocity.y)) {
+        console.log('collision!!!!');
+        playerVelocity.y = el.position.y + el.geometry.parameters.height - player.position.y;
+        // console.log(playerVelocity.y)
+        lockFalling = true;
+        if (player.position.y === el.position.y + el.geometry.parameters.height) 
+        fallStop();
+      }
+    })
+  }
 
   var update = function() {
     if (ticks % 8 === 0) {
@@ -162,6 +189,7 @@ function(scene, frameLoader) {
     }
     player.position.x += playerVelocity.x;
     player.position.y += playerVelocity.y;
+    checkCollision();
     if (isJumping) {
       checkJump();
     }
