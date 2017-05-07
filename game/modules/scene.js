@@ -28,11 +28,11 @@ define(function() {
 
     window.cam = camera;
     camera.position.x = 0;
-    camera.position.z = 145;
-    camera.position.y = 80;
-    // camera.rotation.y = 0.3;
+    camera.position.z = 200;
+    camera.position.y = 150;
+    camera.rotation.x = -0.3;
 
-    // scene.fog = new THREE.Fog(0x1ec503, 0.5, 450);
+    scene.fog = new THREE.Fog(0xefd1b5, 0.0025, 700);
 
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
     renderer.setSize(WIDTH, HEIGHT);
@@ -60,7 +60,13 @@ define(function() {
     camera.updateProjectionMatrix();
   };
 
+  var refreshCamera = function(cb) {
+    TweenMax.to(camera.rotation, 1, { x: 0});
+    TweenMax.to(camera.position, 1, { x: 0, y: 80, z: 145, onComplete: cb });
+  };
+
   return {
+    refreshCamera: refreshCamera,
     createScene: createScene,
     scene: scene,
     camera: camera

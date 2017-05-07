@@ -9,7 +9,8 @@ define([
   './modules/rexIO',
   './modules/block',
   './modules/platform',
-  './modules/windows'
+  './modules/windows',
+  './modules/title'
 ], function(
   sceneClass,
   player,
@@ -21,7 +22,8 @@ define([
   reksio,
   block,
   platform,
-  windows
+  windows,
+  title
 ) {
   'use strict';
   var scene;
@@ -29,6 +31,7 @@ define([
   function init(event) {
     scene = sceneClass.createScene();
     sceneClass.scene = scene.scene;
+    sceneClass.camera = scene.camera;
     lights.createLights();
     player.init().then(function() {
       sceneClass.scene.add( player.player );
@@ -55,7 +58,6 @@ define([
       cube.position.set(monsterPlatform.x, monsterPlatform.y, 0);
       sceneClass.scene.add( cube );
       ///////////////////////////////////////////////
-
     });
 
     var windowPositions = [];
@@ -86,9 +88,11 @@ define([
         }
       }
     }).then(function() {
+      return title.init();
+    }).then(function() {
       return reksio.init();
     }).then(function() {
-      reksio.mesh.position.set( -150, 0, 0 );
+      reksio.mesh.position.set( -150, 0, -5 );
       sceneClass.scene.add( reksio.mesh );
 
       var queue = [];
@@ -102,8 +106,7 @@ define([
 
       var d = $.Deferred().resolve();
       while (queue.length > 0) {
-        var elem =
-        d = d.then(function(params){
+        d = d.then(function(params) {
           return function() {
             return animate.jumpTo(reksio, params[0], params[1], params[2]).then(function(){
               if(params[3]) {
