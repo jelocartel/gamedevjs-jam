@@ -3,9 +3,10 @@ define([
   './frameLoader',
   './platform',
   './ground',
-  './windows'
+  './windows',
+  './scene'
 ],
-function(scene, frameLoader, platform, ground, windows) {
+function(scene, frameLoader, platform, ground, windows, scene) {
   var framesUrls = [
     'dobromir/walk1',
     'dobromir/walk2',
@@ -43,6 +44,8 @@ function(scene, frameLoader, platform, ground, windows) {
       return;
     }
 
+    TweenMax.to(scene.camera.rotation, 0.3, { y: 0 });
+    TweenMax.to(scene.camera.position, 0.3, { x: player.position.x + 10, y: player.position.y+10, z: player.position.z+20 });
     currentActionsInterval = 0;
     isAction = true;
     // playerVelocity.x = 0;
@@ -201,16 +204,16 @@ function(scene, frameLoader, platform, ground, windows) {
 
   var update = function() {
     if (ticks % 8 === 0) {
-      if (currentActionsInterval === actionsInterval) {
+      if (currentActionsInterval === actionsInterval && isAction) {
         if (currentWindow) {
           var w = windows.getWindow(currentWindow);
-          console.log(w);
           if (w) {
             w.fix();
           }
         }
         changeAnimation('idle');
         isAction = false;
+        scene.refreshCamera(function(){});
       }
       changeFrame();
     }

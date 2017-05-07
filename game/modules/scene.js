@@ -60,7 +60,13 @@ define(function() {
     camera.updateProjectionMatrix();
   };
 
+  var refreshCamera = function(cb) {
+    TweenMax.to(camera.rotation, 1, { x: 0});
+    TweenMax.to(camera.position, 1, { x: 0, y: 80, z: 145, onComplete: cb });
+  };
+
   return {
+    refreshCamera: refreshCamera,
     createScene: createScene,
     scene: scene,
     camera: camera

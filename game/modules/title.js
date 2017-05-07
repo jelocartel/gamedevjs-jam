@@ -28,8 +28,7 @@ define([
 
   var go = function() {
     TweenMax.to(mesh.position, 1, { y: -150, onComplete: function() {
-      TweenMax.to(scene.camera.rotation, 1, { x: 0});
-      TweenMax.to(scene.camera.position, 1, { x: 0, y: 80, z: 145, onComplete: dfd.resolve });
+      scene.refreshCamera(dfd.resolve);
     }});
   };
 
