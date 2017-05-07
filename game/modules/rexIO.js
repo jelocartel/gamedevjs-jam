@@ -53,12 +53,14 @@ function(scene, frameLoader) {
     return dfd;
   };
 
-  var lookLeft = function() {
-    TweenMax.to(monster.rotation, 0.3, { y: Math.PI/2 });
+  var lookLeft = function(cb) {
+    cb = cb || function(){};
+    TweenMax.to(monster.rotation, 0.3, { y: Math.PI/2 , onComplete: function(){ cb();}});
   };
 
-  var lookRight = function() {
-    TweenMax.to(monster.rotation, 0.3, { y: -Math.PI/2 });
+  var lookRight = function(cb) {
+    cb = cb || function(){};
+    TweenMax.to(monster.rotation, 0.3, { y: -Math.PI/2, onComplete: function(){ cb();}});
   };
 
   var lookStraight = function() {
