@@ -21,7 +21,6 @@ define([
     sceneClass.scene = scene.scene;
     lights.createLights();
     player.init().then(function() {
-      player.player.position.set( 0, 5, 0 );
       sceneClass.scene.add( player.player );
     });
     sceneClass.scene.add( ground.ground );

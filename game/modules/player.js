@@ -4,8 +4,9 @@ define([
 ],
 function(scene, frameLoader) {
   var that = this;
-  var player = new THREE.Group();
+  player = new THREE.Group();
 
+  var speed = 2;
   var framesUrls = [
     'dobromir/walk1',
     'dobromir/walk2',
@@ -26,10 +27,23 @@ function(scene, frameLoader) {
       player.castShadow = true;
       player.receiveShadow = true;
       changeFrame(0);
+      lookLeft();
       dfd.resolve();
     });
 
     return dfd;
+  };
+
+  var lookLeft = function() {
+    TweenMax.to(player.rotation, 0.3, { y: Math.PI/2 });
+  };
+
+  var lookRight = function() {
+    TweenMax.to(player.rotation, 0.3, { y: -Math.PI/2 });
+  };
+
+  var lookStraight = function() {
+    TweenMax.to(player.rotation, 0.3, { y: 0 });
   };
 
   var playerPosition = {
@@ -107,11 +121,20 @@ function(scene, frameLoader) {
     if (isFalling) {
       checkFall();
     }
+
+    if (playerVelocity.x < 0) {
+      lookRight();
+    } else if (playerVelocity.x > 0) {
+      lookLeft();
+    } else {
+      lookStraight();
+    }
   };
 
   return {
     init: init,
     player: player,
+    speed: speed,
     changePosition: changePosition,
     jump: jump,
     checkJump: checkJump,
