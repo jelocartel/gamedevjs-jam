@@ -22,6 +22,7 @@ define(function() {
     return platform;
   };
 
+
   return {
     createPlatform: createPlatform,
     allPlatforms: allPlatforms
