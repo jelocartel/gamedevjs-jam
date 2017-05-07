@@ -29,6 +29,7 @@ define([
     player.init().then(function() {
       sceneClass.scene.add( player.player );
     });
+
     sceneClass.scene.add( ground.ground );
     scene.camera.position.z = 170;
 
