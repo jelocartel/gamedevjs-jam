@@ -5,7 +5,8 @@ define([
   './modules/lights',
   './modules/keyboardHandler',
   './modules/animate',
-  './modules/monsterAI'
+  './modules/monsterAI',
+  './modules/rexIO'
 ], function(
   sceneClass,
   player,
@@ -13,7 +14,8 @@ define([
   lights,
   keyboardHandler,
   animate,
-  monsterAi
+  monsterAi,
+  reksio
 ) {
   'use strict';
   var scene;
@@ -27,19 +29,18 @@ define([
     });
     sceneClass.scene.add( ground.ground );
     scene.camera.position.z = 170;
-    var geometry = new THREE.BoxGeometry( 20, 20, 20 );
-    var material = new THREE.MeshLambertMaterial( {color: 0x0000ff} );
-    var cube = new THREE.Mesh( geometry, material );
-    window.cube = cube;
-    cube.position.set( -150, 10, 0 );
-    sceneClass.scene.add( cube );
 
-    animate.jumpTo(cube.position ,1, '+=100', '+=0');
-    animate.jumpTo(cube.position ,1, '+=50', '+=37.5', 1);
-    animate.jumpTo(cube.position ,1.5, '-=50', '+=40', 2);
-    animate.jumpTo(cube.position, 2, '+=100', '+=50', 3.5);
-    monsterAi.setMonster(cube);
-    setTimeout(function(){ monsterAi.start(); }, 6000);
+    reksio.init().then(function() {
+      reksio.mesh.position.set( -150, 10, 0 );
+      sceneClass.scene.add( reksio.mesh );
+
+      animate.jumpTo(reksio.mesh.position ,1, '+=100', '+=0');
+      animate.jumpTo(reksio.mesh.position ,1, '+=50', '+=37.5', 1);
+      animate.jumpTo(reksio.mesh.position ,1.5, '-=50', '+=40', 2);
+      animate.jumpTo(reksio.mesh.position, 2, '+=100', '+=50', 3.5);
+      monsterAi.setMonster(reksio);
+      setTimeout(function(){ monsterAi.start(); }, 6000);
+    });
 
     render();
   }
@@ -47,6 +48,7 @@ define([
   function render() {
     requestAnimationFrame( render );
     player.update();
+    reksio.update();
     scene.renderer.render( scene.scene, scene.camera );
   }
 
