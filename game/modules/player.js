@@ -32,7 +32,6 @@ function(scene) {
   var fallSpeed = 0;
 
   var jump = function() {
-    // console.log('jump')
     if(!isJumping && !isFalling) {
       fallSpeed = 0;
       isJumping = true;
